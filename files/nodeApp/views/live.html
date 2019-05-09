@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Live Data for CM Tribe</title>
+        
+        
+        <!-- 1. Add these JavaScript inclusions in the head of your page -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.js"></script>
+        <script src="http://code.highcharts.com/stock/highstock.js"></script>
+        <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+        
+        
+        <!-- 2. Add the JavaScript to initialize the chart on document ready -->
+        <script>
+        var chart; // global
+        var dict = new Array(); // Used to keep the name of the series
+        var todaysTime = new Date();
+        todaysTime.setHours((new Date()).getHours() - 10);
+        var lastQueryTime = todaysTime.getTime(); // Se usa para obtener los puntos a partir de la ultima actualizacion
+        var refreshTime=5000;
+        var emptySeriesRemoved=false;
+        var numberOfSeries=0;
+        var maxPointsInReport=20;
+        
+        /**
+         * Request data from the server, add it to the graph and set a timeout to request again
+         */
+        function requestData() {
+            
+            $.ajax({
+                url: '/dataForGraphics/haDataReal?dateToQuery='+lastQueryTime, 
+                success: function(scenarios) {
+                    console.log("lastQueryTime: " + lastQueryTime);
+                    lastQueryTime=new Date().getTime() - (refreshTime/3)
+                    for(var i=0;i<scenarios.length;i++){
+                        var scenario = scenarios[i];
+                        timeTaken=scenario["timeTaken"]
+                        startTime=scenario["startTime"]
+                        vuser=scenario["vuser"]
+                        nodeName=scenario["nodeName"]
+                        ucName=scenario["ucName"]
+                        ipAddress=scenario["ipAddress"]
+                        successfulAssertions=scenario["successfulAssertions"]
+                        failedAssertions=scenario["failedAssertions"]
+                        useCases=scenario["useCases"]
+
+                        console.log("ucName:" + ucName + "=>[" + startTime + "," + timeTaken + "]");
+                        
+                        if (dict[ucName] == undefined) {
+                            if (!emptySeriesRemoved){
+                                chart.series[0].remove();
+                                emptySeriesRemoved=true;
+                                numberOfSeries--;
+                                console.log("Removing series in position: 0 and size is: " + chart.series.length);
+                                chart.hideLoading();
+                            }
+
+                            // BAD PATCH
+                            if (numberOfSeries < 0) {
+                                console.log("Error, resetting numberOfSeries to 0")
+                                numberOfSeries = 0;
+                            }
+                            console.log("Adding series for [" + ucName + "] to position [" + numberOfSeries + "]");
+                            chart.addSeries({
+                                name: ucName,
+                                data: []
+                            }, true);
+                            numberOfSeries++;
+                            console.log("number of series: " + chart.series.length);
+                            dict[ucName] = chart.series[numberOfSeries];
+                            
+                            shift = dict[ucName].data.length > maxPointsInReport;
+                            
+                            //var series = chart.series[0]; // shift if the series is longer than 20
+                            //series.remove();
+                        } else {
+                            console.log("Serie already created for " + ucName + " in " + dict[ucName]);
+                        }
+                        dict[ucName].addPoint([startTime,parseFloat(timeTaken)], true, shift);
+                    }
+                    
+                    // call it again after one second
+                    setTimeout(requestData, refreshTime);
+                },
+                cache: false
+            });
+        }
+            
+        $(document).ready(function() {
+            chart = new Highcharts.StockChart({
+                global: {
+                    useUTC: false
+                },
+                chart: {
+                    renderTo: 'container',
+                    defaultSeriesType: 'line',
+                    events: {
+                        load: requestData
+                    },
+                    zoomType: 'xy',
+                },
+                title: {
+                    text: 'Performance Testing'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    tickPixelInterval: 150,
+                    maxZoom: maxPointsInReport * 1000,
+                    title: {
+                        text: 'Executed time',
+                        margin: 40
+                    }
+                },
+                yAxis: {
+                    minPadding: 1,
+                    maxPadding: 1,
+                    title: {
+                        text: 'Time Taken',
+                        margin: 20
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                legend: {
+                    enabled: true
+                },
+                exporting: {
+                    enabled: true
+                },
+                series: [{
+                    name: 'Empty-Serie',
+                    data: []
+                }]
+            });
+            chart.showLoading();
+        });
+
+        </script>
+        
+    </head>
+    <body>
+        <!--
+
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + this.series.name + '</b><br/>' +
+                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                            Highcharts.numberFormat(this.y, 2);
+                    }
+                },
+    -->
+        <!-- 3. Add the container -->
+        <div id="container" style="width: 90%; height: 600px; margin: 0 auto"></div>
+    </body>
+</html>

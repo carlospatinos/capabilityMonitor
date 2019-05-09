@@ -1,0 +1,42 @@
+extends layout
+
+block content
+
+  div.top
+    div.contentx
+      
+  div.container
+    div.content
+      table.table.table-striped
+        thead
+          tr
+            th(style="text-align:center;") Total Price
+            th(style="text-align:center;") Number Of Days
+            th(style="text-align:center;") Departure Date
+            th(style="text-align:center;") Return Date
+            th(style="text-align:center;") Origin
+            th(style="text-align:center;") Destiny
+            th(style="text-align:center;") Search Date
+            th(style="text-align:center;") Adults
+            th(style="text-align:center;") Children
+            th(style="text-align:center;") Infants
+            th(style="text-align:center;") URL
+            th(style="text-align:center;") Action
+        tbody
+          each schedule, i in schedules
+            tr
+              td(style="text-align:center;") #{schedule.price}
+              td(style="text-align:center;") #{schedule.numberOfDays}
+              td(style="text-align:center;") #{schedule.departureDate}
+              td(style="text-align:center;") #{schedule.returnDate}
+              td(style="text-align:center;") #{schedule.origin}
+              td(style="text-align:center;") #{schedule.destiny}
+              th(style="text-align:center;") #{schedule.executionDate}
+              th(style="text-align:center;") #{schedule.adults}
+              th(style="text-align:center;") #{schedule.children}
+              th(style="text-align:center;") #{schedule.infants}
+              td 
+                a(href='#{schedule.url}' target='_blank').btn.btn-info Info
+              th
+                a(href='/trip/deleteSchedule/#{schedule._id}').btn.btn-danger Delete
+  

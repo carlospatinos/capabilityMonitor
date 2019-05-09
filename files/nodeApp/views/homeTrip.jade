@@ -1,0 +1,50 @@
+extends layout
+
+block content
+
+    #wrapper
+        // div.top
+        //   div.contentx
+        // div.container
+        //   div.content
+        h3= title
+        a.btn.btn-small.btn-danger(href="#fullDeleteModal", role="button", data-toggle="modal", id='massiveDelete') Delete all over €2,800
+
+        #schedules
+          table.table.table-striped
+            thead
+              tr
+                th(style="text-align:center;") Total Price
+                th(style="text-align:center;") Number Of Days
+                th(style="text-align:center;") Departure Date
+                th(style="text-align:center;") Return Date
+                th(style="text-align:center;") Origin
+                th(style="text-align:center;") Destiny
+                th(style="text-align:center;") Search Date
+                th(style="text-align:center;") Adults
+                th(style="text-align:center;") Children
+                th(style="text-align:center;") Infants
+                th(style="text-align:center;") URL
+                th(style="text-align:center;") Action
+            tbody
+        // schedules
+        // div.footer
+        #fullDeleteModal.modal.hide.fade(tabindex='-1', role='dialog', aria-labelledby='bigModalLabel', aria-hidden='true')
+          .modal-header
+              button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+              h3#bigModalLabel Multiple Delete
+          .modal-body
+              p  You are going to delete everything over €2,800. Is this ok?.
+          .modal-footer
+              button.btn(data-dismiss='modal', aria-hidden='true') Cancel
+              button.btn.btn-primary(onclick="batchDelete(2800);", data-dismiss='modal', aria-hidden='true') Yes
+        #smallDeleteModal.modal.hide.fade(tabindex='-1', role='dialog', aria-labelledby='smallModalLabel', aria-hidden='true')
+          .modal-header
+              button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+              h3#smallModalLabel Delete single record
+          .modal-body
+              p  Is the real price over 2700? If so go ahead and delete it.
+          .modal-footer
+              button.btn(data-dismiss='modal', aria-hidden='true') Cancel
+              button.btn.btn-primary(data-dismiss='modal', aria-hidden='true') Yes
+    // /WRAPPER

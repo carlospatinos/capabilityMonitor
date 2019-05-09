@@ -1,0 +1,59 @@
+curl -i -X GET http://localhost:3000/dataForGraphics/haData
+
+curl -i -X GET http://localhost:3000/dataForGraphics/haDataReal?dateToQuery=1437555000000
+
+curl -i -X GET www.highcharts.com/studies/live-server-data.php ==> [1437467875000,14]
+
+curl --data "param1=value1&param2=value2" http://localhost:3000/dataForGraphics/addDataReal
+
+curl -X POST http://localhost:3000/dataForGraphics/addDataReal
+
+curl -H "Content-Type: application/json" -X POST -d '{"useCases":[{"name": "add_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}, {"name": "delete_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}], "timeTaken" : "17", "startTime" : 1437559892090, "vuser":"VirtualUsers-3", "nodeName":"LTENODE06", "ipAddress":"192.168.0.6", "ucName":"add_mo+delete_mo",  "successfulAssertions":"5", "failedAssertions":"7" }' http://localhost:3000/dataForGraphics/haDataReal
+
+-------------------------------------
+import json
+import requests
+
+r = requests.get('http://localhost:3000/dataForGraphics/haDataReal?dateToQuery=1437577837516')
+r.json()
+
+payload = {
+    "useCases":[
+      {"name": "add_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"},
+      {"name": "delete_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}
+    ],
+    "timeTaken" : "17",
+    "startTime" : 1437580566194,
+    "vuser": "VirtualUsers-3",
+    "nodeName": "LTENODE06", 
+    "ipAddress": "192.168.0.6",
+    "ucName": "add_node+delete_node",
+    "successfulAssertions": "4",
+    "failedAssertions": "4"
+}
+payload = {"useCases":[{"name": "add_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}, {"name": "delete_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}], "timeTaken" : "17", "startTime" : 1437580566194, "vuser":"VirtualUsers-9", "nodeName":"LTENODE06", "ipAddress":"192.168.0.6", "ucName":"sync",  "successfulAssertions":"9", "failedAssertions":"7" }
+
+payload_json = json.dumps(payload)
+headers = {'Content-type': 'application/json'}
+
+r = requests.post("http://localhost:3000/dataForGraphics/haDataReal", params=payload_json, headers=headers)
+r = requests.post("http://localhost:3000/dataForGraphics/haDataReal", data=payload_json, headers=headers)
+print(r.text)
+
+
+ curl -H "Content-Type: application/json" -X POST -d '{
+  "id": "projectdemo",
+  "cmd": "cd apache-tomee-plus* && sed \"s/8080/$PORT/g\" < ./conf/server.xml > ./conf/server-mesos.xml && ./bin/catalina.sh run -config ./conf/server-mesos.xml",
+  "mem": 256,
+  "cpus": 0.5,
+  "instances": 1,
+  "ports":[10000],
+  "constraints": [
+    ["hostname", "UNIQUE"]
+  ],
+  "uris": [
+    "http://ftp.cixug.es/apache/tomee/tomee-1.7.1/apache-tomee-1.7.1-plus.tar.gz"
+  ]
+}' http://10.141.141.10:8080/v2/apps 
+
+curl DELETE http://10.141.141.10:8080/v2/apps/projectdemo

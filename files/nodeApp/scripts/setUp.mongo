@@ -1,0 +1,54 @@
+use enmCapabilitiesResults
+
+db.haResults.find().sort( {startTime: -1} ).limit(20).pretty()
+
+
+batch2=[{
+    "useCases":[
+      {"name": "add_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"},
+      {"name": "delete_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}
+    ],
+    "timeTaken" : "17",
+    "startTime" : 1437555962000,
+    "vuser":"VirtualUsers-3",
+    "nodeName":"LTENODE06", 
+    "ipAddress":"192.168.0.6",
+    "ucName":"add_node+delete_node",
+    "successfulAssertions":"4",
+    "failedAssertions":"4"
+  },{
+    "useCases":[
+      {"name": "add_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"},
+      {"name": "delete_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}
+    ],
+    "timeTaken" : "17",
+    "startTime" : 1437555982000,
+    "vuser":"VirtualUsers-3",
+    "nodeName":"LTENODE06", 
+    "ipAddress":"192.168.0.6",
+    "ucName":"add_node+sync+delete_node",
+    "successfulAssertions":"8",
+    "failedAssertions":"8"
+  },{
+    "useCases":[
+      {"name": "add_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"},
+      {"name": "delete_node_scenario.cfg", "executionTime":"12", "successfulAssertions": "2", "failedAssertions":"2"}
+    ],
+    "timeTaken" : "17",
+    "startTime" : 1437556000000,
+    "vuser":"VirtualUsers-3",
+    "nodeName":"LTENODE06", 
+    "ipAddress":"192.168.0.6",
+    "ucName":"add_mo+delete_mo",
+    "successfulAssertions":"7",
+    "failedAssertions":"7"
+  }]
+db.haResults.insert(batch2)
+
+db.haResults.find().pretty()
+
+db.enmCapabilitiesResults.remove( { } )
+db.haResults.remove( { } )
+
+db.haResults.find( { failedAssertions: "7" } )
+db.haResults.find( { startTime : { $gt: 1437555000000 }  } )
